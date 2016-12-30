@@ -16,13 +16,14 @@ html, body {
   font-size: 50px;
   font-weight: bold;
   font-family: Futura, sans-serif;
-  color: transparent;
-  text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0);
   opacity: 0;
-  transition: opacity 1s ease-in, text-shadow 1s ease-in;
+  text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  transition: opacity 1s linear, color 0.25s ease-in 0.75s, text-shadow 1s ease-in;
 }
 
 #blur-test:hover {
-  text-shadow: 0 0 0px rgba(0, 0, 0, 1);
+  color: rgba(0, 0, 0, 1);
   opacity: 1;
+  text-shadow: 0 0 0px rgba(0, 0, 0, 1);
 }
