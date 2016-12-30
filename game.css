@@ -11,3 +11,18 @@ html, body {
   left: 0;
   right: 0;
 }
+
+#blur-test {
+  font-size: 50px;
+  font-weight: bold;
+  font-family: Futura, sans-serif;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 1s ease-in, text-shadow 1s ease-in;
+}
+
+#blur-test:hover {
+  text-shadow: 0 0 0px rgba(0, 0, 0, 1);
+  opacity: 1;
+}
