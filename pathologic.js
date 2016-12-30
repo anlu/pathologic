@@ -21,7 +21,75 @@ class Board {
       }
       ctx.translate(-(this.puzzle_json[0].length * TRANSLATE_SIZE), TRANSLATE_SIZE);
     }
+
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    let shortestPath = this.getShortestPath();
+    for (let coord of shortestPath) {
+      ctx.translate(coord['col'] * TRANSLATE_SIZE, coord['row'] * TRANSLATE_SIZE);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+  }
+
+  getShortestPath() {
+    let starts = [];
+    let ends = [];
+    for (let row in this.puzzle_json) {
+      for (let col in this.puzzle_json[row]) {
+        row = parseInt(row);
+        col = parseInt(col);
+        if (this.puzzle_json[row][col] === 'S') {
+          starts.push({'row': row, 'col': col});
+        } else if (this.puzzle_json[row][col] === 'E') {
+          ends.push({'row': row, 'col': col});
+        }
+      }
+    }
+
+    return this._getShortestPath(starts[0], ends[0], [], {});
+  }
+
+  _getShortestPath(start, end, visited) {
+    if (start['row'] === end['row'] && start['col'] === end['col']) {
+      return [start];
+    }
+
+    let possibilities = [
+      {'row': start['row'] + 1, 'col': start['col']},
+      {'row': start['row'] - 1, 'col': start['col']},
+      {'row': start['row'], 'col': start['col'] + 1},
+      {'row': start['row'], 'col': start['col'] - 1}
+    ].filter(coord => {
+      return !visited[this._coordKey(coord)] && (
+        this.puzzle_json[coord['row']][coord['col']] === ' ' ||
+        this.puzzle_json[coord['row']][coord['col']] === 'E'
+      );
+    });
+
+    var shortestPath = null;
+    var shortestLength = Infinity;
+    for (let coord of possibilities) {
+      let newVisited = Object.assign({}, visited);
+      newVisited[this._coordKey(coord)] = true;
+      let path = this._getShortestPath(coord, end, newVisited);
+      if (path !== null && path.length < shortestLength) {
+        shortestLength = path.length;
+        shortestPath = path;
+      }
+    }
+
+    // No valid paths found in each of the 4 directions
+    if (shortestPath === null) {
+      return null;
+    }
+
+    return [start].concat(shortestPath);
+  }
+
+  _coordKey(coord) {
+    return coord['row'] + ',' + coord['col'];
   }
 }
 
@@ -31,7 +99,7 @@ let puzzle_json = [
   '-0000000000-',
   '00        00',
   '00 000000 00',
-  '            ',
+  'S          E',
   '00 000000 00',
   '00        00',
   '-0000000000-',
@@ -39,8 +107,5 @@ let puzzle_json = [
 let board = new Board(puzzle_json);
 let ctx = document.getElementById('pathologic').getContext('2d');
 
-ctx.globalCompositeOperation = 'destination-over';
 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-window.requestAnimationFrame(() => {
-  board.draw(ctx);
-});
+board.draw(ctx);
