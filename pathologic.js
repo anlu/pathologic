@@ -3,12 +3,12 @@ const TILE_GAP = 2;
 const TRANSLATE_SIZE = TILE_SIZE + TILE_GAP;
 
 class Board {
-  constructor(puzzle_json) {
-    this.puzzle_json = puzzle_json;
+  constructor(puzzleJson) {
+    this.puzzleJson = puzzleJson;
   }
 
   draw(ctx) {
-    for (let row_tiles of this.puzzle_json) {
+    for (let row_tiles of this.puzzleJson) {
       for (let tile of row_tiles) {
         if (tile === '0') {
           ctx.fillStyle = '#2a2a2a';
@@ -19,7 +19,7 @@ class Board {
         }
         ctx.translate(TRANSLATE_SIZE, 0);
       }
-      ctx.translate(-(this.puzzle_json[0].length * TRANSLATE_SIZE), TRANSLATE_SIZE);
+      ctx.translate(-(this.puzzleJson[0].length * TRANSLATE_SIZE), TRANSLATE_SIZE);
     }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -36,13 +36,13 @@ class Board {
   getShortestPath() {
     let starts = [];
     let ends = [];
-    for (let row in this.puzzle_json) {
-      for (let col in this.puzzle_json[row]) {
+    for (let row in this.puzzleJson) {
+      for (let col in this.puzzleJson[row]) {
         row = parseInt(row);
         col = parseInt(col);
-        if (this.puzzle_json[row][col] === 'S') {
+        if (this.puzzleJson[row][col] === 'S') {
           starts.push({'row': row, 'col': col});
-        } else if (this.puzzle_json[row][col] === 'E') {
+        } else if (this.puzzleJson[row][col] === 'E') {
           ends.push({'row': row, 'col': col});
         }
       }
@@ -63,8 +63,8 @@ class Board {
       {'row': start['row'], 'col': start['col'] - 1}
     ].filter(coord => {
       return !visited[this._coordKey(coord)] && (
-        this.puzzle_json[coord['row']][coord['col']] === ' ' ||
-        this.puzzle_json[coord['row']][coord['col']] === 'E'
+        this.puzzleJson[coord['row']][coord['col']] === ' ' ||
+        this.puzzleJson[coord['row']][coord['col']] === 'E'
       );
     });
 
@@ -95,7 +95,7 @@ class Board {
 
 // '0' - not part of puzzle
 // ' ' - valid route
-let puzzle_json = [
+let puzzleJson = [
   '-0000000000-',
   '00        00',
   '00 000000 00',
@@ -104,7 +104,7 @@ let puzzle_json = [
   '00        00',
   '-0000000000-',
 ];
-let board = new Board(puzzle_json);
+let board = new Board(puzzleJson);
 let ctx = document.getElementById('pathologic').getContext('2d');
 
 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
