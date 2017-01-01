@@ -34,6 +34,43 @@ class Board {
   }
 
   getShortestPath() {
+    let _getShortestPath = (start, end, visited) => {
+      if (start['row'] === end['row'] && start['col'] === end['col']) {
+        return [start];
+      }
+
+      let possibilities = [
+        {'row': start['row'] + 1, 'col': start['col']},
+        {'row': start['row'] - 1, 'col': start['col']},
+        {'row': start['row'], 'col': start['col'] + 1},
+        {'row': start['row'], 'col': start['col'] - 1}
+      ].filter(coord => {
+        return !visited[this._coordKey(coord)] && (
+          this.puzzleJson[coord['row']][coord['col']] === ' ' ||
+          this.puzzleJson[coord['row']][coord['col']] === 'E'
+        );
+      });
+
+      var shortestPath = null;
+      var shortestLength = Infinity;
+      for (let coord of possibilities) {
+        let newVisited = Object.assign({}, visited);
+        newVisited[this._coordKey(coord)] = true;
+        let path = _getShortestPath(coord, end, newVisited);
+        if (path !== null && path.length < shortestLength) {
+          shortestLength = path.length;
+          shortestPath = path;
+        }
+      }
+
+      // No valid paths found in each of the 4 directions
+      if (shortestPath === null) {
+        return null;
+      }
+
+      return [start].concat(shortestPath);
+    };
+
     let starts = [];
     let ends = [];
     for (let row in this.puzzleJson) {
@@ -48,44 +85,7 @@ class Board {
       }
     }
 
-    return this._getShortestPath(starts[0], ends[0], [], {});
-  }
-
-  _getShortestPath(start, end, visited) {
-    if (start['row'] === end['row'] && start['col'] === end['col']) {
-      return [start];
-    }
-
-    let possibilities = [
-      {'row': start['row'] + 1, 'col': start['col']},
-      {'row': start['row'] - 1, 'col': start['col']},
-      {'row': start['row'], 'col': start['col'] + 1},
-      {'row': start['row'], 'col': start['col'] - 1}
-    ].filter(coord => {
-      return !visited[this._coordKey(coord)] && (
-        this.puzzleJson[coord['row']][coord['col']] === ' ' ||
-        this.puzzleJson[coord['row']][coord['col']] === 'E'
-      );
-    });
-
-    var shortestPath = null;
-    var shortestLength = Infinity;
-    for (let coord of possibilities) {
-      let newVisited = Object.assign({}, visited);
-      newVisited[this._coordKey(coord)] = true;
-      let path = this._getShortestPath(coord, end, newVisited);
-      if (path !== null && path.length < shortestLength) {
-        shortestLength = path.length;
-        shortestPath = path;
-      }
-    }
-
-    // No valid paths found in each of the 4 directions
-    if (shortestPath === null) {
-      return null;
-    }
-
-    return [start].concat(shortestPath);
+    return _getShortestPath(starts[0], ends[0], [], {});
   }
 
   _coordKey(coord) {
