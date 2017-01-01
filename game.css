@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Futura Condensed Medium';
+  src: url('./futura-condensed-medium.otf');
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -13,13 +18,14 @@ html, body {
 }
 
 #blur-test {
-  font-size: 50px;
-  font-weight: bold;
-  font-family: Futura, sans-serif;
+  font-size: 75px;
+  font-weight: thin;
+  font-family: 'Futura Condensed Medium', sans-serif;
   opacity: 0;
   color: transparent;
   text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   transition: opacity 1s linear, text-shadow 1s ease-in;
+  letter-spacing: -0.03em;
 }
 
 #blur-test:hover {
