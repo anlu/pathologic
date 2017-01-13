@@ -16,6 +16,19 @@ class Board {
         } else if (tile === ' ') {
           ctx.fillStyle = '#f1f1f1';
           ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+        } else if (tile === 'S') {
+          ctx.fillStyle = '#f1f1f1';
+          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+
+          ctx.fillStyle = '#b2f784';
+          ctx.beginPath();
+          ctx.moveTo(15, 11);
+          ctx.lineTo(38, 25);
+          ctx.lineTo(15, 39);
+          ctx.fill();
+        } else if (tile === 'E') {
+          ctx.fillStyle = '#123456';
+          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
         }
         ctx.translate(TRANSLATE_SIZE, 0);
       }
@@ -27,8 +40,16 @@ class Board {
     let shortestPath = this.getShortestPath();
     for (let coord of shortestPath) {
       ctx.translate(coord['col'] * TRANSLATE_SIZE, coord['row'] * TRANSLATE_SIZE);
-      ctx.fillStyle = 'green';
+      ctx.fillStyle = '#dddddd';
       ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+
+      ctx.fillStyle = '#ebdf9c';
+      ctx.beginPath();
+      ctx.moveTo(15, 11);
+      ctx.lineTo(38, 25);
+      ctx.lineTo(15, 39);
+      ctx.fill();
+
       ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
   }
