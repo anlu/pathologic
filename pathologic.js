@@ -76,6 +76,10 @@ class Board {
   }
 
   getShortestPath() {
+    let _coordKey = function(coord) {
+      return coord['row'] + ',' + coord['col'];
+    };
+
     let _getShortestPath = (start, end, visited) => {
       if (start['row'] === end['row'] && start['col'] === end['col']) {
         return [start];
@@ -87,7 +91,7 @@ class Board {
         {'row': start['row'], 'col': start['col'] + 1},
         {'row': start['row'], 'col': start['col'] - 1}
       ].filter(coord => {
-        return !visited[this._coordKey(coord)] && (
+        return !visited[_coordKey(coord)] && (
           this.board[coord['row']][coord['col']] === ' ' ||
           this.board[coord['row']][coord['col']] === 'E'
         );
@@ -97,7 +101,7 @@ class Board {
       var shortestLength = Infinity;
       for (let coord of possibilities) {
         let newVisited = Object.assign({}, visited);
-        newVisited[this._coordKey(coord)] = true;
+        newVisited[_coordKey(coord)] = true;
         let path = _getShortestPath(coord, end, newVisited);
         if (path !== null && path.length < shortestLength) {
           shortestLength = path.length;
@@ -128,10 +132,6 @@ class Board {
     }
 
     return _getShortestPath(starts[0], ends[0], [], {});
-  }
-
-  _coordKey(coord) {
-    return coord['row'] + ',' + coord['col'];
   }
 
   _handleClick(e) {
