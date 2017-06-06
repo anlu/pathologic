@@ -19,8 +19,8 @@ class Board {
   }
 
   draw() {
+    this.ctx.save();
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
     for (let rowTiles of this.board) {
       for (let tile of rowTiles) {
         if (tile === 'X') {
@@ -50,16 +50,12 @@ class Board {
       }
       this.ctx.translate(-(this.board[0].length * TILE_SIZE), TILE_SIZE);
     }
+    this.ctx.restore();
 
-    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-    if (this.drawRoute) {
-      let shortestPath = this.getShortestPath();
-      if (shortestPath === null) {
-        return;
-      }
-
+    let shortestPath = this.getShortestPath();
+    if (this.drawRoute && shortestPath) {
       for (let coord of shortestPath) {
+        this.ctx.save();
         this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
         this.ctx.fillStyle = '#dddddd';
         this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
@@ -70,8 +66,7 @@ class Board {
         this.ctx.lineTo(38, 25);
         this.ctx.lineTo(15, 39);
         this.ctx.fill();
-
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.restore();
       }
     }
   }
