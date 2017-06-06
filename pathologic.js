@@ -8,6 +8,7 @@ class Board {
     this.elem = elem;
     this.ctx = elem.getContext('2d');
     this.drawRoute = false;
+    this.numPlacedBlocks = 0;
 
     for (let i in this.board) {
       if (typeof this.board[i] === 'string') {
@@ -51,6 +52,9 @@ class Board {
       this.ctx.translate(-(this.board[0].length * TILE_SIZE), TILE_SIZE);
     }
     this.ctx.restore();
+
+    this.ctx.font = '20px sans-serif';
+    this.ctx.fillText(this.puzzleJson['maxBlocks'] - this.numPlacedBlocks, 700, 100);
 
     let shortestPath = this.getShortestPath();
     if (this.drawRoute && shortestPath) {
@@ -135,10 +139,12 @@ class Board {
     let y = Math.floor(e.offsetY / TILE_SIZE);
 
     if (y < this.board.length && x < this.board[0].length) {
-      if (this.board[y][x] === ' ') {
+      if (this.board[y][x] === ' ' && this.numPlacedBlocks < this.puzzleJson['maxBlocks']) {
         this.board[y][x] = 'B';
+        this.numPlacedBlocks += 1;
       } else if (this.board[y][x] === 'B') {
         this.board[y][x] = ' ';
+        this.numPlacedBlocks -= 1;
       }
     }
 
