@@ -45,7 +45,7 @@ class Board {
         ctx.fillStyle = '#dddddd';
         ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-        ctx.fillStyle = '#ebdf9c';
+        ctx.fillStyle = '#e1cf6b';
         ctx.beginPath();
         ctx.moveTo(15, 11);
         ctx.lineTo(38, 25);
