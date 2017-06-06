@@ -17,6 +17,12 @@ html, body {
   right: 0;
 }
 
+#right-body {
+  position: absolute;
+  width: 400px;
+  margin-left: 850px;
+}
+
 #blur-test {
   font-size: 75px;
   font-weight: thin;

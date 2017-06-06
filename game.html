@@ -12,7 +12,46 @@
 <body>
   <canvas id="pathologic" width="1024" height="640"></canvas>
 
-  <div id="blur-test">pathologic</div>
-  <script src="pathologic.js"></script>
+  <div id="right-body">
+    <div id="blur-test">pathologic</div>
+    <button onClick="showRoute();">Show Route</button>
+    <button onClick="clearRoute();">Clear</button>
+  </div>
+
+  <script src="pathologic.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    // X - wall
+    //   - valid route
+    // - - empty space
+    // S, E - start, end
+    let puzzleJson = [
+      '-XXXXXXXXXX-',
+      'XX       EXX',
+      'XX XXXXXX XX',
+      'S           ',
+      'XX XXXXXX XX',
+      'XX        XX',
+      '-XXXXXXXXXX-',
+    ];
+    let board = new Board(puzzleJson);
+    let ctx = document.getElementById('pathologic').getContext('2d');
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    board.draw(ctx);
+
+    function showRoute() {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      board.drawRoute = true;
+      board.draw(ctx);
+    }
+
+    function clearRoute() {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      board.drawRoute = false;
+      board.draw(ctx);
+    }
+  </script>
 </body>
 </html>

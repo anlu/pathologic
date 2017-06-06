@@ -1,26 +1,26 @@
 const TILE_SIZE = 50;
-const TILE_GAP = 2;
-const TRANSLATE_SIZE = TILE_SIZE + TILE_GAP;
+const TRANSLATE_SIZE = TILE_SIZE;
 
 class Board {
   constructor(puzzleJson) {
     this.puzzleJson = puzzleJson;
+    this.drawRoute = false;
   }
 
   draw(ctx) {
     for (let row_tiles of this.puzzleJson) {
       for (let tile of row_tiles) {
-        if (tile === '0') {
+        if (tile === 'X') {
           ctx.fillStyle = '#2a2a2a';
-          ctx.fillRect(-TILE_GAP, -TILE_GAP, TILE_SIZE + (TILE_GAP * 2), TILE_SIZE + (TILE_GAP * 2));
+          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
         } else if (tile === ' ') {
-          ctx.fillStyle = '#f1f1f1';
-          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+          ctx.fillStyle = '#e1e1e1';
+          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
         } else if (tile === 'S') {
-          ctx.fillStyle = '#f1f1f1';
-          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+          ctx.fillStyle = '#e1e1e1';
+          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-          ctx.fillStyle = '#b2f784';
+          ctx.fillStyle = '#53c309';
           ctx.beginPath();
           ctx.moveTo(15, 11);
           ctx.lineTo(38, 25);
@@ -28,29 +28,32 @@ class Board {
           ctx.fill();
         } else if (tile === 'E') {
           ctx.fillStyle = '#123456';
-          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
         }
-        ctx.translate(TRANSLATE_SIZE, 0);
+        ctx.translate(TILE_SIZE, 0);
       }
-      ctx.translate(-(this.puzzleJson[0].length * TRANSLATE_SIZE), TRANSLATE_SIZE);
+      ctx.translate(-(this.puzzleJson[0].length * TILE_SIZE), TILE_SIZE);
     }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    let shortestPath = this.getShortestPath();
-    for (let coord of shortestPath) {
-      ctx.translate(coord['col'] * TRANSLATE_SIZE, coord['row'] * TRANSLATE_SIZE);
-      ctx.fillStyle = '#dddddd';
-      ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+    if (this.drawRoute) {
+      let shortestPath = this.getShortestPath();
 
-      ctx.fillStyle = '#ebdf9c';
-      ctx.beginPath();
-      ctx.moveTo(15, 11);
-      ctx.lineTo(38, 25);
-      ctx.lineTo(15, 39);
-      ctx.fill();
+      for (let coord of shortestPath) {
+        ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
+        ctx.fillStyle = '#dddddd';
+        ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = '#ebdf9c';
+        ctx.beginPath();
+        ctx.moveTo(15, 11);
+        ctx.lineTo(38, 25);
+        ctx.lineTo(15, 39);
+        ctx.fill();
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
     }
   }
 
@@ -113,20 +116,3 @@ class Board {
     return coord['row'] + ',' + coord['col'];
   }
 }
-
-// '0' - not part of puzzle
-// ' ' - valid route
-let puzzleJson = [
-  '-0000000000-',
-  '00        00',
-  '00 000000 00',
-  'S          E',
-  '00 000000 00',
-  '00        00',
-  '-0000000000-',
-];
-let board = new Board(puzzleJson);
-let ctx = document.getElementById('pathologic').getContext('2d');
-
-ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-board.draw(ctx);
