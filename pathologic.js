@@ -2,22 +2,35 @@ const TILE_SIZE = 50;
 const TRANSLATE_SIZE = TILE_SIZE;
 
 class Board {
-  constructor(puzzleJson, ctx) {
+  constructor(puzzleJson, elem) {
     this.puzzleJson = puzzleJson;
-    this.ctx = ctx;
+    this.board = puzzleJson['board'];
+    this.elem = elem;
+    this.ctx = elem.getContext('2d');
     this.drawRoute = false;
+
+    for (let i in this.board) {
+      if (typeof this.board[i] === 'string') {
+        this.board[i] = this.board[i].split('');
+      }
+    }
+
+    elem.addEventListener('click', this._handleClick.bind(this));
   }
 
   draw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-    for (let row_tiles of this.puzzleJson) {
-      for (let tile of row_tiles) {
+    for (let rowTiles of this.board) {
+      for (let tile of rowTiles) {
         if (tile === 'X') {
           this.ctx.fillStyle = '#2a2a2a';
           this.ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
         } else if (tile === ' ') {
           this.ctx.fillStyle = '#e1e1e1';
+          this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+        } else if (tile === 'B') {
+          this.ctx.fillStyle = '#444';
           this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
         } else if (tile === 'S') {
           this.ctx.fillStyle = '#e1e1e1';
@@ -35,13 +48,16 @@ class Board {
         }
         this.ctx.translate(TILE_SIZE, 0);
       }
-      this.ctx.translate(-(this.puzzleJson[0].length * TILE_SIZE), TILE_SIZE);
+      this.ctx.translate(-(this.board[0].length * TILE_SIZE), TILE_SIZE);
     }
 
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     if (this.drawRoute) {
       let shortestPath = this.getShortestPath();
+      if (shortestPath === null) {
+        return;
+      }
 
       for (let coord of shortestPath) {
         this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
@@ -73,8 +89,8 @@ class Board {
         {'row': start['row'], 'col': start['col'] - 1}
       ].filter(coord => {
         return !visited[this._coordKey(coord)] && (
-          this.puzzleJson[coord['row']][coord['col']] === ' ' ||
-          this.puzzleJson[coord['row']][coord['col']] === 'E'
+          this.board[coord['row']][coord['col']] === ' ' ||
+          this.board[coord['row']][coord['col']] === 'E'
         );
       });
 
@@ -100,13 +116,13 @@ class Board {
 
     let starts = [];
     let ends = [];
-    for (let row in this.puzzleJson) {
-      for (let col in this.puzzleJson[row]) {
+    for (let row in this.board) {
+      for (let col in this.board[row]) {
         row = parseInt(row);
         col = parseInt(col);
-        if (this.puzzleJson[row][col] === 'S') {
+        if (this.board[row][col] === 'S') {
           starts.push({'row': row, 'col': col});
-        } else if (this.puzzleJson[row][col] === 'E') {
+        } else if (this.board[row][col] === 'E') {
           ends.push({'row': row, 'col': col});
         }
       }
@@ -117,5 +133,20 @@ class Board {
 
   _coordKey(coord) {
     return coord['row'] + ',' + coord['col'];
+  }
+
+  _handleClick(e) {
+    let x = Math.floor(e.offsetX / TILE_SIZE);
+    let y = Math.floor(e.offsetY / TILE_SIZE);
+
+    if (y < this.board.length && x < this.board[0].length) {
+      if (this.board[y][x] === ' ') {
+        this.board[y][x] = 'B';
+      } else if (this.board[y][x] === 'B') {
+        this.board[y][x] = ' ';
+      }
+    }
+
+    this.draw();
   }
 }
