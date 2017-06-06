@@ -7,7 +7,6 @@ class Board {
     this.board = puzzleJson['board'];
     this.elem = elem;
     this.ctx = elem.getContext('2d');
-    this.drawRoute = false;
     this.numPlacedBlocks = 0;
 
     for (let i in this.board) {
@@ -55,10 +54,26 @@ class Board {
 
     this.ctx.font = '20px sans-serif';
     this.ctx.fillText(this.puzzleJson['maxBlocks'] - this.numPlacedBlocks, 700, 100);
+  }
 
+  animateShortestPath() {
+    let DRAW_DELAY_MS = 30; // Interval to wait before drawing successive path blocks
     let shortestPath = this.getShortestPath();
-    if (this.drawRoute && shortestPath) {
-      for (let coord of shortestPath) {
+    if (shortestPath === null) {
+      return;
+    }
+
+    let _animate = function(step, reverse) {
+      this.draw();
+
+      let squaresToDraw;
+      if (reverse) {
+        squaresToDraw = shortestPath.slice(step, shortestPath.length);
+      } else {
+        squaresToDraw = shortestPath.slice(0, step);
+      }
+
+      for (let coord of squaresToDraw) {
         this.ctx.save();
         this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
         this.ctx.fillStyle = '#dddddd';
@@ -72,7 +87,16 @@ class Board {
         this.ctx.fill();
         this.ctx.restore();
       }
+
+      if (step === shortestPath.length) {
+        if (!reverse) {
+          setTimeout(_animate.bind(this, 1, true), 1000);
+        }
+      } else {
+        setTimeout(_animate.bind(this, step + 1, reverse), DRAW_DELAY_MS);
+      }
     }
+    _animate.bind(this)(1, false);
   }
 
   getShortestPath() {

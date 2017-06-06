@@ -12,8 +12,7 @@
 <body>
   <div id="right-body">
     <div id="blur-test">pathologic</div>
-    <button onClick="showRoute();">Show Route</button>
-    <button onClick="clearRoute();">Clear</button>
+    <button onClick="board.animateShortestPath();">Show Route</button>
   </div>
 
   <script src="utils.js" type="text/javascript"></script>
@@ -32,9 +31,9 @@
       'board': [
         '-XXXXXXXXXX-',
         'XX       EXX',
-        'XX XXXXXX XX',
+        'X   XXXXX XX',
         'S           ',
-        'XX XXXXXX XX',
+        'X   XXXXX XX',
         'XX        XX',
         '-XXXXXXXXXX-',
       ],
@@ -44,16 +43,6 @@
     let elem = document.getElementById('pathologic');;
     let board = new Board(puzzleJson, elem);
     board.draw();
-
-    function showRoute() {
-      board.drawRoute = true;
-      board.draw();
-    }
-
-    function clearRoute() {
-      board.drawRoute = false;
-      board.draw();
-    }
   </script>
 </body>
 </html>
