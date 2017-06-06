@@ -33,22 +33,16 @@
       'XX        XX',
       '-XXXXXXXXXX-',
     ];
-    let board = new Board(puzzleJson);
     let ctx = document.getElementById('pathologic').getContext('2d');
-
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    board.draw(ctx);
+    let board = new Board(puzzleJson, ctx);
+    board.draw();
 
     function showRoute() {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
       board.drawRoute = true;
-      board.draw(ctx);
+      board.draw();
     }
 
     function clearRoute() {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
       board.drawRoute = false;
       board.draw(ctx);
     }

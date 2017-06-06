@@ -2,57 +2,60 @@ const TILE_SIZE = 50;
 const TRANSLATE_SIZE = TILE_SIZE;
 
 class Board {
-  constructor(puzzleJson) {
+  constructor(puzzleJson, ctx) {
     this.puzzleJson = puzzleJson;
+    this.ctx = ctx;
     this.drawRoute = false;
   }
 
-  draw(ctx) {
+  draw() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
     for (let row_tiles of this.puzzleJson) {
       for (let tile of row_tiles) {
         if (tile === 'X') {
-          ctx.fillStyle = '#2a2a2a';
-          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+          this.ctx.fillStyle = '#2a2a2a';
+          this.ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
         } else if (tile === ' ') {
-          ctx.fillStyle = '#e1e1e1';
-          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+          this.ctx.fillStyle = '#e1e1e1';
+          this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
         } else if (tile === 'S') {
-          ctx.fillStyle = '#e1e1e1';
-          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+          this.ctx.fillStyle = '#e1e1e1';
+          this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-          ctx.fillStyle = '#53c309';
-          ctx.beginPath();
-          ctx.moveTo(15, 11);
-          ctx.lineTo(38, 25);
-          ctx.lineTo(15, 39);
-          ctx.fill();
+          this.ctx.fillStyle = '#53c309';
+          this.ctx.beginPath();
+          this.ctx.moveTo(15, 11);
+          this.ctx.lineTo(38, 25);
+          this.ctx.lineTo(15, 39);
+          this.ctx.fill();
         } else if (tile === 'E') {
-          ctx.fillStyle = '#123456';
-          ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+          this.ctx.fillStyle = '#123456';
+          this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
         }
-        ctx.translate(TILE_SIZE, 0);
+        this.ctx.translate(TILE_SIZE, 0);
       }
-      ctx.translate(-(this.puzzleJson[0].length * TILE_SIZE), TILE_SIZE);
+      this.ctx.translate(-(this.puzzleJson[0].length * TILE_SIZE), TILE_SIZE);
     }
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     if (this.drawRoute) {
       let shortestPath = this.getShortestPath();
 
       for (let coord of shortestPath) {
-        ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
-        ctx.fillStyle = '#dddddd';
-        ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+        this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
+        this.ctx.fillStyle = '#dddddd';
+        this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
 
-        ctx.fillStyle = '#e1cf6b';
-        ctx.beginPath();
-        ctx.moveTo(15, 11);
-        ctx.lineTo(38, 25);
-        ctx.lineTo(15, 39);
-        ctx.fill();
+        this.ctx.fillStyle = '#e1cf6b';
+        this.ctx.beginPath();
+        this.ctx.moveTo(15, 11);
+        this.ctx.lineTo(38, 25);
+        this.ctx.lineTo(15, 39);
+        this.ctx.fill();
 
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
     }
   }
