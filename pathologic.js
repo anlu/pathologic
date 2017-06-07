@@ -63,32 +63,55 @@ class Board {
       return;
     }
 
+    let drawPath = [];
+    for (let i = 0;i < shortestPath.length - 1;i++) {
+      // Rotation starts at positive x axis and goes downwards
+      let cur = shortestPath[i], next = shortestPath[i+1];
+      if (next['row'] > cur['row']) {
+        cur['rotation'] = Math.PI / 2;
+      } else if (next['row'] < cur['row']) {
+        cur['rotation'] = -Math.PI / 2;
+      } else if (next['col'] < cur['col']) {
+        cur['rotation'] = Math.PI;
+      } else {
+        cur['rotation'] = 0;
+      }
+      drawPath.push(cur);
+    }
+
+    let _drawSquare = function(coord) {
+      this.ctx.save();
+      this.ctx.translate(coord['col'] * TILE_SIZE + TILE_SIZE / 2, coord['row'] * TILE_SIZE + TILE_SIZE / 2);
+      this.ctx.rotate(coord['rotation']);
+      this.ctx.translate(-(coord['col'] * TILE_SIZE + TILE_SIZE / 2), -(coord['row'] * TILE_SIZE + TILE_SIZE / 2));
+      this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
+      this.ctx.fillStyle = '#dddddd';
+      this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
+
+      this.ctx.fillStyle = '#e1cf6b';
+      this.ctx.beginPath();
+      this.ctx.moveTo(15, 11);
+      this.ctx.lineTo(38, 25);
+      this.ctx.lineTo(15, 39);
+      this.ctx.fill();
+      this.ctx.restore();
+    };
+
     let _animate = function(step, reverse) {
       this.draw();
 
       let squaresToDraw;
       if (reverse) {
-        squaresToDraw = shortestPath.slice(step, shortestPath.length);
+        squaresToDraw = drawPath.slice(step, drawPath.length);
       } else {
-        squaresToDraw = shortestPath.slice(0, step);
+        squaresToDraw = drawPath.slice(0, step);
       }
 
       for (let coord of squaresToDraw) {
-        this.ctx.save();
-        this.ctx.translate(coord['col'] * TILE_SIZE, coord['row'] * TILE_SIZE);
-        this.ctx.fillStyle = '#dddddd';
-        this.ctx.fillRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
-
-        this.ctx.fillStyle = '#e1cf6b';
-        this.ctx.beginPath();
-        this.ctx.moveTo(15, 11);
-        this.ctx.lineTo(38, 25);
-        this.ctx.lineTo(15, 39);
-        this.ctx.fill();
-        this.ctx.restore();
+        _drawSquare.bind(this)(coord);
       }
 
-      if (step === shortestPath.length) {
+      if (step === drawPath.length) {
         if (!reverse) {
           setTimeout(_animate.bind(this, 1, true), 1000);
         }
