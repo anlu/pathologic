@@ -6,7 +6,7 @@
 
   <title>Pathologic</title>
 
-  <link rel="stylesheet" type="text/css" href="game.css">
+  <link rel="stylesheet" type="text/css" href="/static/game.css">
 </head>
 
 <body>
@@ -15,8 +15,8 @@
     <button onClick="board.animateShortestPath();">Show Route</button>
   </div>
 
-  <script src="utils.js" type="text/javascript"></script>
-  <script src="pathologic.js" type="text/javascript"></script>
+  <script src="/static/utils.js" type="text/javascript"></script>
+  <script src="/static/pathologic.js" type="text/javascript"></script>
   <script type="text/javascript">
     let canvas = utils.createHiDPICanvas(1024, 640);
     canvas.id = 'pathologic';
